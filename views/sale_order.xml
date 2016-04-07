@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+  <data>
+    <record id="view_sale_order_2" model="ir.ui.view">
+      <field name="name">Sale Order Multiple Dues</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="arch" type="xml">
+          <xpath expr="//form[@string='Sales Order']/sheet/notebook/page[@string='Order Lines']/field[@name='order_line']/tree/field[@name='price_subtotal']" position="after">
+            <button string="Crear Cuotas" name="action_create_cuota" type="object" class="oe_highlight"/>
+          </xpath>
+
+        <xpath expr="//field[@name='note']" position="before">
+              <sheet>
+
+                <label for="cuota_ids" string="CUOTAS POR LINEA DE PEDIDO"/>
+                <field name="cuota_ids" nolabel="1" widget="one2many_list" >
+                  <tree string="Linea de Cuotas" editable="top">
+                    <field name="state" invisible="1" />
+                    <field name="nro_cuota" attrs="{'readonly':[('state','!=','draft')]}" />
+                    <field name="description" attrs="{'readonly':[('state','!=','draft')]}" />
+                    <field name="monto_cuota" attrs="{'readonly':[('state','!=','draft')]}" />
+                    <field name="fecha_creacion" attrs="{'readonly':[('state','!=','draft')]}"/>
+                    <field name="fecha_vencimiento" attrs="{'readonly':[('state','!=','draft')]}" />
+                    <field name="invoice_id" invisible="1" />
+                    <field name="status" attrs="{'readonly':[('state','=','draft')]}" />
+                  </tree>
+                </field>
+                <group class="oe_subtotal_footer oe_right" colspan="2">
+                <div class="oe_subtotal_footer_separator oe_inline">
+                        <label for="verify_dues"/>
+                        <button name="button_refresh" states="draft, sent" type="object" string="Actualizar" class="oe_link oe_edit_only" help=""/>
+                    </div>
+                    <field name="verify_dues" nolabel="1" class="oe_subtotal_footer_separator" widget="monetary" options="{'currency_field': 'currency_id'}" />
+                 </group>
+              </sheet>
+        </xpath>
+      </field>
+    </record>
+    <record id="crear_cuotas_portal_peru_wizard" model="ir.ui.view">
+            <field name="name">crear_cuotas_inquba_wizard.form</field>
+            <field name="model">sale.order.dates</field>
+            <field name="arch" type="xml">
+              <form>
+                <group>
+                    <group>
+                      <field name="se_repite" style="width:18%%"/>
+                      <field name="repetir_cada" style="width:18%%"/>
+                      <field name="empieza" style="width:25%%"/>
+                      <field name="finaliza" style="width:18%%"/>
+                    </group>
+                </group>
+                <div style="text-align:left; display:block;">
+                    <div style="float:left; width:105px">
+                        <button icon="gtk-cancel" special="cancel" string="Cancelar"/>
+                    </div>
+                    <div onclick="$(this).parent().hide()" style="float:left; width:126px">
+                        <button icon="gtk-ok" name="crear" string="Crear Cuotas" type="object" />
+                    </div>
+                </div>
+                <div style="text-align:left; clear:both; width:100%">
+                    <button icon="gtk-refresh" name="refresh" type="object" string="Cerrar"/>
+                </div>
+              </form>
+            </field>
+        </record>
+
+        <record id="action_crear_cuotas_portal_peru_wizard" model="ir.actions.act_window">
+            <field name="name">Invoice Order</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.dates</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+        <!--
+        <act_window id="action_crear_cuotas_portal_peru"
+                    name="Crear Cuotas 2"
+                    src_model="sale.order"
+                    res_model="sale.order.dates"
+                    view_mode="form"
+                    target="new"
+                    key2="client_action_multi"/>
+        -->
+  </data>
+</openerp>
